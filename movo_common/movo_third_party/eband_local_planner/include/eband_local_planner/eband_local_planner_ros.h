@@ -67,6 +67,7 @@
 #include <angles/angles.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
+#include <tf2_ros/buffer.h>
 
 // costmap & geometry
 #include <costmap_2d/costmap_2d_ros.h>
@@ -96,7 +97,7 @@ namespace eband_local_planner{
        * @param tf A pointer to a transform listener
        * @param costmap The cost map to use for assigning costs to trajectories
        */
-      EBandPlannerROS(std::string name, tf::TransformListener* tf,
+      EBandPlannerROS(std::string name, tf2_ros::Buffer* tf_buffer,
           costmap_2d::Costmap2DROS* costmap_ros);
 
       /**
@@ -110,7 +111,7 @@ namespace eband_local_planner{
        * @param tf A pointer to a transform listener
        * @param costmap The cost map to use for assigning costs to trajectories
        */
-      void initialize(std::string name, tf::TransformListener* tf,
+      void initialize(std::string name, tf2_ros::Buffer* tf_buffer, 
           costmap_2d::Costmap2DROS* costmap_ros);
 
       /**
@@ -149,7 +150,8 @@ namespace eband_local_planner{
 
       // pointer to external objects (do NOT delete object)
       costmap_2d::Costmap2DROS* costmap_ros_; ///<@brief pointer to costmap
-      tf::TransformListener* tf_; ///<@brief pointer to Transform Listener
+      tf2_ros::Buffer* tf_buffer_;
+
 
       // parameters
       double yaw_goal_tolerance_, xy_goal_tolerance_; ///<@brief parameters to define region in which goal is treated as reached
@@ -166,14 +168,17 @@ namespace eband_local_planner{
       std::vector<geometry_msgs::PoseStamped> transformed_plan_; // plan transformed into the map frame we are working in
       std::vector<int> plan_start_end_counter_; // stores which number start and end frame of the transformed plan have inside the global plan
 
+
       // pointer to locally created objects (delete - except for smart-ptrs:)
       boost::shared_ptr<EBandPlanner> eband_;
       boost::shared_ptr<EBandVisualization> eband_visual_;
       boost::shared_ptr<EBandTrajectoryCtrl> eband_trj_ctrl_;
+      tf2_ros::TransformListener* tf_; ///<@brief pointer to Transform Listener
 
       bool goal_reached_;
 
       // flags
+      bool owns_buffer_;
       bool initialized_;
       boost::mutex odom_mutex_; // mutex to lock odometry-callback while data is read from topic
 

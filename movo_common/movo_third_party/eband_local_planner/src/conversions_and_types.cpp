@@ -86,7 +86,7 @@ namespace eband_local_planner{
   }
 
 
-  bool transformGlobalPlan(const tf::TransformListener& tf, const std::vector<geometry_msgs::PoseStamped>& global_plan, 
+  bool transformGlobalPlan(const tf2_ros::Buffer& tf_buffer, const std::vector<geometry_msgs::PoseStamped>& global_plan, 
       costmap_2d::Costmap2DROS& costmap, const std::string& global_frame, 
       std::vector<geometry_msgs::PoseStamped>& transformed_plan, std::vector<int>& start_end_counts)
   {
@@ -103,16 +103,24 @@ namespace eband_local_planner{
         return false;
       }
 
-      tf::StampedTransform transform;
-      tf.lookupTransform(global_frame, ros::Time(), plan_pose.header.frame_id, plan_pose.header.stamp, 
-          plan_pose.header.frame_id, transform);
+      // tf::StampedTransform transform;
+      geometry_msgs::TransformStamped transform;
+      transform = tf_buffer.lookupTransform(global_frame, ros::Time(), plan_pose.header.frame_id, plan_pose.header.stamp, 
+          plan_pose.header.frame_id);
 
       //let's get the pose of the robot in the frame of the plan
+      geometry_msgs::PoseStamped robot_pose;
+      robot_pose.header.frame_id = costmap.getBaseFrameID();
+      robot_pose.header.stamp = ros::Time();
+      tf2::doTransform(robot_pose, robot_pose, transform);
+      
+      /*
       tf::Stamped<tf::Pose> robot_pose;
       robot_pose.setIdentity();
       robot_pose.frame_id_ = costmap.getBaseFrameID();
       robot_pose.stamp_ = ros::Time();
       tf.transformPose(plan_pose.header.frame_id, robot_pose, robot_pose);
+      */
 
       //we'll keep points on the plan that are within the window that we're looking at
 
@@ -139,8 +147,8 @@ namespace eband_local_planner{
       //we need to loop to a point on the plan that is within a certain distance of the robot
       while(i < (unsigned int)global_plan.size() && sq_dist > sq_dist_threshold)
       {
-        double x_diff = robot_pose.getOrigin().x() - global_plan[i].pose.position.x;
-        double y_diff = robot_pose.getOrigin().y() - global_plan[i].pose.position.y;
+        double x_diff = robot_pose.pose.position.x - global_plan[i].pose.position.x;
+        double y_diff = robot_pose.pose.position.y - global_plan[i].pose.position.y;
         sq_dist = x_diff * x_diff + y_diff * y_diff;
 
         // --- start - modification w.r.t. base_local_planner
@@ -154,23 +162,30 @@ namespace eband_local_planner{
       }
 
 
-      tf::Stamped<tf::Pose> tf_pose;
-      geometry_msgs::PoseStamped newer_pose;
+      //tf::Stamped<tf::Pose> tf_pose;
+      geometry_msgs::PoseStamped tf_pose;
+
 
       //now we'll transform until points are outside of our distance threshold
       while(i < (unsigned int)global_plan.size() && sq_dist < sq_dist_threshold)
       {
-        double x_diff = robot_pose.getOrigin().x() - global_plan[i].pose.position.x;
-        double y_diff = robot_pose.getOrigin().y() - global_plan[i].pose.position.y;
+        double x_diff = robot_pose.pose.position.x - global_plan[i].pose.position.x;
+        double y_diff = robot_pose.pose.position.y - global_plan[i].pose.position.y;
         sq_dist = x_diff * x_diff + y_diff * y_diff;
 
         const geometry_msgs::PoseStamped& pose = global_plan[i];
-        poseStampedMsgToTF(pose, tf_pose);
+
+        geometry_msgs::PoseStamped newer_pose;
+	tf2::doTransform(pose, newer_pose, transform);
+	newer_pose.header.stamp = transform.header.stamp;
+        newer_pose.header.frame_id = global_frame;
+        /*
+	poseStampedMsgToTF(pose, tf_pose);
         tf_pose.setData(transform * tf_pose);
         tf_pose.stamp_ = transform.stamp_;
         tf_pose.frame_id_ = global_frame;
         poseStampedTFToMsg(tf_pose, newer_pose);
-
+        */
         transformed_plan.push_back(newer_pose);
 
         // --- start - modification w.r.t. base_local_planner

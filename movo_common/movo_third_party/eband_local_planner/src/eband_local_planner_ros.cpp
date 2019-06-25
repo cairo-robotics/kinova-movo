@@ -46,33 +46,45 @@
 
 // register this planner as a BaseGlobalPlanner plugin
 // (see http://www.ros.org/wiki/pluginlib/Tutorials/Writing%20and%20Using%20a%20Simple%20Plugin)
-PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planner::EBandPlannerROS, nav_core::BaseLocalPlanner)
+PLUGINLIB_EXPORT_CLASS(eband_local_planner::EBandPlannerROS, nav_core::BaseLocalPlanner)
 
 
   namespace eband_local_planner{
 
-    EBandPlannerROS::EBandPlannerROS() : costmap_ros_(NULL), tf_(NULL), initialized_(false) {}
+    EBandPlannerROS::EBandPlannerROS() : costmap_ros_(NULL), tf_(NULL), initialized_(false), owns_buffer_(true) { tf_buffer_ = new tf2_ros::Buffer(); }
 
 
-    EBandPlannerROS::EBandPlannerROS(std::string name, tf::TransformListener* tf, costmap_2d::Costmap2DROS* costmap_ros)
-      : costmap_ros_(NULL), tf_(NULL), initialized_(false)
+    EBandPlannerROS::EBandPlannerROS(std::string name, tf2_ros::Buffer* tf_buffer, costmap_2d::Costmap2DROS* costmap_ros)
+      : costmap_ros_(NULL), tf_buffer_(NULL), tf_(NULL), initialized_(false), owns_buffer_(false)
     {
       // initialize planner
-      initialize(name, tf, costmap_ros);
+      initialize(name, tf_buffer, costmap_ros);
     }
 
 
-    EBandPlannerROS::~EBandPlannerROS() {}
+    EBandPlannerROS::~EBandPlannerROS() { 
+        if (owns_buffer_ == true) 
+            delete tf_buffer_;
+        delete tf_;
+    }
 
 
-    void EBandPlannerROS::initialize(std::string name, tf::TransformListener* tf, costmap_2d::Costmap2DROS* costmap_ros)
+    void EBandPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf_buffer, costmap_2d::Costmap2DROS* costmap_ros)
     {
       // check if the plugin is already initialized
       if(!initialized_)
       {
-        // copy adress of costmap and Transform Listener (handed over from move_base)
+	if (owns_buffer_ == true)
+            delete tf_buffer_;
+	tf_buffer_ = tf_buffer;
+        // copy address of costmap and Transform Listener (handed over from move_base)
         costmap_ros_ = costmap_ros;
-        tf_ = tf;
+	if (tf_buffer == NULL) {
+	    ROS_WARN("Planner initialized with NULL tf2_ros::Buffer!");
+	    owns_buffer_ = true;
+	    tf_buffer_ = new tf2_ros::Buffer();
+	}
+        tf_ = new tf2_ros::TransformListener(*tf_buffer_);
 
 
         // create Node Handle with name of plugin (as used in move_base for loading)
@@ -226,20 +238,20 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
 
       // instantiate local variables
       //std::vector<geometry_msgs::PoseStamped> local_plan;
-      tf::Stamped<tf::Pose> global_pose;
+      // tf::Stamped<tf::Pose> global_pose;
       geometry_msgs::PoseStamped global_pose_msg;
       std::vector<geometry_msgs::PoseStamped> tmp_plan;
 
       // get curent robot position
       ROS_DEBUG("Reading current robot Position from costmap and appending it to elastic band.");
-      if(!costmap_ros_->getRobotPose(global_pose))
+      if(!costmap_ros_->getRobotPose(global_pose_msg))
       {
         ROS_WARN("Could not retrieve up to date robot pose from costmap for local planning.");
         return false;
       }
 
       // convert robot pose to frame in plan and set position in band at which to append
-      tf::poseStampedTFToMsg(global_pose, global_pose_msg);
+      // tf::poseStampedTFToMsg(global_pose, global_pose_msg);
       tmp_plan.assign(1, global_pose_msg);
       eband_local_planner::AddAtPosition add_frames_at = add_front;
 

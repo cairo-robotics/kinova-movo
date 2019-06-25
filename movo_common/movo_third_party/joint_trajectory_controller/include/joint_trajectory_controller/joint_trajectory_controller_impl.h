@@ -76,9 +76,9 @@ std::vector<std::string> getStrings(const ros::NodeHandle& nh, const std::string
   return out;
 }
 
-boost::shared_ptr<urdf::Model> getUrdf(const ros::NodeHandle& nh, const std::string& param_name)
+urdf::ModelSharedPtr getUrdf(const ros::NodeHandle& nh, const std::string& param_name)
 {
-  boost::shared_ptr<urdf::Model> urdf(new urdf::Model);
+  urdf::ModelSharedPtr urdf(new urdf::Model);
 
   std::string urdf_str;
   // Check for robot_description in proper namespace
@@ -88,19 +88,19 @@ boost::shared_ptr<urdf::Model> getUrdf(const ros::NodeHandle& nh, const std::str
     {
       ROS_ERROR_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter (namespace: " <<
         nh.getNamespace() << ").");
-      return boost::shared_ptr<urdf::Model>();
+      return urdf::ModelSharedPtr(); 
     }
   }
   // Check for robot_description in root
   else if (!urdf->initParam("robot_description"))
   {
     ROS_ERROR_STREAM("Failed to parse URDF contained in '" << param_name << "' parameter");
-    return boost::shared_ptr<urdf::Model>();
+    return urdf::ModelSharedPtr();
   }
   return urdf;
 }
 
-typedef boost::shared_ptr<const urdf::Joint> UrdfJointConstPtr;
+typedef urdf::JointConstSharedPtr UrdfJointConstPtr;
 std::vector<UrdfJointConstPtr> getUrdfJoints(const urdf::Model& urdf, const std::vector<std::string>& joint_names)
 {
   std::vector<UrdfJointConstPtr> out;
@@ -283,7 +283,8 @@ bool JointTrajectoryController<SegmentImpl, HardwareInterface>::init(HardwareInt
   const unsigned int n_joints = joint_names_.size();
 
   // URDF joints
-  boost::shared_ptr<urdf::Model> urdf = getUrdf(root_nh, "robot_description");
+  //boost::shared_ptr<urdf::Model> urdf = getUrdf(root_nh, "robot_description"); //BHH
+  urdf::ModelSharedPtr urdf = getUrdf(root_nh, "robot_description");
   if (!urdf) {return false;}
 
   std::vector<UrdfJointConstPtr> urdf_joints = getUrdfJoints(*urdf, joint_names_);
@@ -554,7 +555,7 @@ goalCB(GoalHandle gh)
   // Try to update new trajectory
   RealtimeGoalHandlePtr rt_goal(new RealtimeGoalHandle(gh));
   const bool update_ok = updateTrajectoryCommand(internal::share_member(gh.getGoal(), gh.getGoal()->trajectory),
-                                                 rt_goal);
+                                                 rt_goal); //BHH Still using boost shared_ptrs
 
   if (update_ok)
   {

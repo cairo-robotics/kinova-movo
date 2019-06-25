@@ -8,6 +8,10 @@
 #include <gazebo/transport/TransportTypes.hh>
 #include <stdio.h>
 #include <gazebo_grasp_plugin/GazeboGraspGripper.h>
+#include <ignition/math.hh>
+#include <ignition/math/Pose3.hh>
+#include <ignition/math/Vector3.hh>
+
 // #include <gazebo_grasp_plugin/CollidingPoint.h>
 
 namespace gazebo {
@@ -153,7 +157,7 @@ private:
      * than minAngleDiff (in rad), and one is at least
      * lengthRatio (0..1) of the other in it's length.
      */
-    bool checkGrip(const std::vector<math::Vector3>& forces, float minAngleDiff, float lengthRatio);
+    bool checkGrip(const std::vector<ignition::math::Vector3<double>>& forces, float minAngleDiff, float lengthRatio);
 
     bool isGripperLink(const std::string& linkName, std::string& gripperName) const;   
 

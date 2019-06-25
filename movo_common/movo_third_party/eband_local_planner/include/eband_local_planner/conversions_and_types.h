@@ -50,7 +50,7 @@
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_datatypes.h>
-
+#include <tf2_ros/transform_listener.h>
 // costmap & geometry
 #include <costmap_2d/costmap_2d_ros.h>
 
@@ -96,7 +96,7 @@ namespace eband_local_planner{
    * @param transformed_plan Populated with the transformed plan
    * @param number of start and end frame counted from the end of the global plan
    */
-  bool transformGlobalPlan(const tf::TransformListener& tf, const std::vector<geometry_msgs::PoseStamped>& global_plan, 
+  bool transformGlobalPlan(const tf2_ros::TransformListener& tf, const std::vector<geometry_msgs::PoseStamped>& global_plan, 
       costmap_2d::Costmap2DROS& costmap, const std::string& global_frame, 
       std::vector<geometry_msgs::PoseStamped>& transformed_plan, std::vector<int>& start_end_counts_from_end);
 
