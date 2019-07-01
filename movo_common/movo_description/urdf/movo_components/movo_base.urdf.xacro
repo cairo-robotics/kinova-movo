@@ -45,10 +45,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <parent link="base_link" />
             <child link="base_chassis_link" />
         </joint>
+
+
         
         <link name="base_chassis_link">
 			<inertial>
-				<mass value="44.2877" />
+				<mass value="100.00" /> <!-- 44.2877 -->
 				<origin xyz="-0.009506 -0.013039 0.032319" />
 				<inertia ixx="0.000165"  ixy="0" ixz="0"
                          iyx="0"  iyy="0.000559" iyz="0"
