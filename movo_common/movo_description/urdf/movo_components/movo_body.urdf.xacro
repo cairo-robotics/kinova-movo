@@ -63,7 +63,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         
         <link name="upper_body_link">
 			<inertial>
-				<mass value="6.246912" />
+				<mass value="0.0" /> <!-- 6.246912 -->
 				<origin xyz="-0.080608 0.000290 0.286026" />
 				<inertia ixx="0.425973"  ixy="0.000022" ixz="-0.015916"
                          iyx="0.000022"  iyy="0.439921" iyz="-0.000555"
