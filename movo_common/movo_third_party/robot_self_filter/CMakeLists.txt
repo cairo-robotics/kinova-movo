@@ -2,6 +2,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(robot_self_filter)
 
+# Set target C++ standard and required compiler features
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 endif()
@@ -9,12 +13,15 @@ endif()
 
 find_package(PkgConfig REQUIRED)
 
-find_package(Boost REQUIRED COMPONENTS signals)
+#find_package(Boost REQUIRED COMPONENTS signals)
+find_package(Boost REQUIRED)
 
 set(bullet_FOUND 0)
 pkg_check_modules(bullet REQUIRED bullet)
 
 find_package( PCL REQUIRED )
+find_package( pcl_conversions REQUIRED )
+
 add_definitions(${PCL_DEFINITIONS})
 
 find_package(ASSIMP QUIET)

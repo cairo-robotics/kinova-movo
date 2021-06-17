@@ -20,7 +20,7 @@ set(THIS_PACKAGE_ROS_DEPS
 )
 
 find_package(catkin REQUIRED COMPONENTS ${THIS_PACKAGE_ROS_DEPS})
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS} ${Eigen_LIBRARY_DIRS})

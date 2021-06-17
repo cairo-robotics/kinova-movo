@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(kinect2_viewer CXX)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBT_USE_DOUBLE_PRECISION -Wall")
 # Unused warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wuninitialized -Winit-self -Wunused-function -Wunused-label -Wunused-variable -Wunused-but-set-variable -Wunused-but-set-parameter")
@@ -22,7 +25,9 @@ ENDIF()
 find_package(catkin REQUIRED COMPONENTS roscpp rostime std_msgs sensor_msgs message_filters cv_bridge image_transport compressed_image_transport compressed_depth_image_transport kinect2_bridge)
 
 ## System dependencies are found with CMake's conventions
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2.4.13.7 EXACT REQUIRED HINTS "/home/brad/libs/opencv24/release/installed/share/OpenCV")
+include_directories(BEFORE /home/brad/libs/opencv24/release/installed/include/opencv)	
+include_directories(BEFORE /home/brad/libs/opencv24/release/installed/include)
 find_package(OpenMP)
 find_package(PCL REQUIRED)
 

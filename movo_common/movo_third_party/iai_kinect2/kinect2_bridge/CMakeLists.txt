@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(kinect2_bridge CXX)
 
+#set(CMAKE_MODULE_PATH "/home/brad/libs/opencv24/release/installed/share/;${CMAKE_MODULE_PATH}")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBT_USE_DOUBLE_PRECISION -Wall")
 # Unused warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wuninitialized -Winit-self -Wunused-function -Wunused-label -Wunused-variable -Wunused-but-set-variable -Wunused-but-set-parameter")
@@ -24,7 +26,8 @@ find_package(freenect2 REQUIRED HINTS "$ENV{HOME}/freenect2")
 find_package(catkin REQUIRED COMPONENTS roscpp rostime tf std_msgs sensor_msgs nodelet cv_bridge compressed_depth_image_transport kinect2_registration)
 
 ## System dependencies are found with CMake's conventions
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2.4.13.7 EXACT REQUIRED HINTS "/home/brad/libs/opencv24/release/installed/share/OpenCV")
+include_directories(BEFORE /home/brad/libs/opencv24/release/installed/include)
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -65,6 +68,9 @@ include_directories(include
   ${freenect2_INCLUDE_DIRS}
   ${kinect2_registration_INCLUDE_DIRS}
 )
+
+message(WARNING "OPENCV INCLUDE: ${OpenCV_INCLUDE_DIRS}")
+
 
 if(DEPTH_REG_OPENCL)
   add_definitions(-DDEPTH_REG_OPENCL)
