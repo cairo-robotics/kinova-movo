@@ -25,9 +25,11 @@ ENDIF()
 find_package(catkin REQUIRED COMPONENTS roscpp rostime std_msgs sensor_msgs message_filters cv_bridge image_transport compressed_image_transport compressed_depth_image_transport kinect2_bridge)
 
 ## System dependencies are found with CMake's conventions
-find_package(OpenCV 2.4.13.7 EXACT REQUIRED HINTS "/home/brad/libs/opencv24/release/installed/share/OpenCV")
-include_directories(BEFORE /home/brad/libs/opencv24/release/installed/include/opencv)	
-include_directories(BEFORE /home/brad/libs/opencv24/release/installed/include)
+find_package(OpenCV 2.4.13.7 EXACT REQUIRED HINTS "$ENV{HOME}/opencv24/share/OpenCV")
+
+include_directories(BEFORE $ENV{HOME}/opencv24/include)
+include_directories(BEFORE $ENV{HOME}/opencv24/include/opencv)
+
 find_package(OpenMP)
 find_package(PCL REQUIRED)
 
