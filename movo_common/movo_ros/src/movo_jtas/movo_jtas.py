@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  \Platform: Linux/ROS Indigo
 --------------------------------------------------------------------"""
 from movo_joint_interface.jaco_joint_controller import SIArmController
-from trajectory_smoother import TrajectorySmoother
+from movo_jtas.trajectory_smoother import TrajectorySmoother
 from moveit_python import MoveGroupInterface
 from moveit_msgs.msg import MoveItErrorCodes
 
@@ -291,7 +291,7 @@ class MovoArmJTAS(object):
         # Position to 0:0.165 == close:open
         position = goal.command.position
         effort = goal.command.max_effort
-        print position
+        print(position)
 
         # Reset feedback/result
         self._update_gripper_feedback(position)

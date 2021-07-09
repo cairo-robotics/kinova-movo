@@ -39,8 +39,8 @@ Edited 7/25/2016: Vivian Chu, vchu@gatech - included support for simulation
 Edited 11/07/2016: David Kent, dekent@gatech - integrated arm commands with wpi_jaco
 
 --------------------------------------------------------------------"""
-from utils import *
-from system_defines import *
+from movo.utils import *
+from movo.system_defines import *
 from movo_msgs.msg import *
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
@@ -120,9 +120,9 @@ class MovoTeleopFullSystem(object):
         self.axis_value = dict()
         self.button_state = dict()
         
-        for key, value in self.ctrl_map.iteritems():
+        for key, value in self.ctrl_map.items():
             if key == 'momentary':
-                for key, value2 in value.iteritems():
+                for key, value2 in value.items():
                     self.db_cnt[key]=0
                     self.button_state[key]=False
             else:
@@ -191,19 +191,19 @@ class MovoTeleopFullSystem(object):
         raw_button_states = dict()
         self.button_state = dict()
         
-        for key, value in self.ctrl_map.iteritems():
+        for key, value in self.ctrl_map.items():
             if key == 'momentary':
-                for key2, value2 in value.iteritems():
+                for key2, value2 in value.items():
                     raw_button_states[key2]=True
                     self.button_state[key2]=False
             else:
-                for key2, value2 in value.iteritems():  
+                for key2, value2 in value.items():  
                     self.axis_value[key2] = 0.0            
          
         
-        for key, value in self.ctrl_map.iteritems():
+        for key, value in self.ctrl_map.items():
             if key == 'momentary':
-                for key2, item in value.iteritems():
+                for key2, item in value.items():
                     if item['is_button']:
                         if item['set_val'] == joyMessage.buttons[item['index']-1]:
                             raw_button_states[key2] &= True
@@ -228,7 +228,7 @@ class MovoTeleopFullSystem(object):
                         self.button_state[key2] = False
                         self.db_cnt[key2] = 0
             if key == 'axis':
-                for key2, item in value.iteritems():
+                for key2, item in value.items():
                     temp = joyMessage.axes[item['index']-1]
                     if (item['invert_axis']):
                         temp *= -1.0

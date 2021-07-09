@@ -42,10 +42,10 @@ from control_msgs.msg import JointTrajectoryControllerState
 from std_msgs.msg import Float32
 import threading
 import math
-from angles import *
-from helpers import *
-from jaco_joint_pid import JacoPID
-from kinova_api_wrapper import *
+from movo_joint_interface.angles import *
+from movo_joint_interface.helpers import *
+from movo_joint_interface.jaco_joint_pid import JacoPID
+from movo_joint_interface.kinova_api_wrapper import *
 import operator
         
 class SIArmController(object):

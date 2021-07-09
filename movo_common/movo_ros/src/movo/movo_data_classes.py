@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  \Platform: Linux/ROS Indigo
 --------------------------------------------------------------------"""
-from utils import convert_u32_to_float,numToDottedQuad
+from movo.utils import convert_u32_to_float,numToDottedQuad
 from movo_msgs.msg import *
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseWithCovarianceStamped
@@ -182,10 +182,10 @@ class Movo_Dynamics:
         self._OdomData1 = Odometry()
         self._OdomData2 = Odometry()
         self._OdomPub1 = rospy.Publisher('/movo/feedback/wheel_odometry', Odometry, queue_size=10)
+        self._OdomPub2 = rospy.Publisher('/movo/odometry/local_filtered', Odometry, queue_size=10) # If _use_lsm_for_odom is False in a config file, this still gets used somehow
         if (False == self._use_lsm_for_odom):
             rospy.Subscriber('/movo/odometry/local_filtered', Odometry, self._update_odom_yaw)
         else:
-            self._OdomPub2 = rospy.Publisher('/movo/odometry/local_filtered', Odometry, queue_size=10)
             self.has_recved_lsm = False
             rospy.Subscriber('/movo/lsm/pose', PoseWithCovarianceStamped, self._update_lsm_odom)     
         

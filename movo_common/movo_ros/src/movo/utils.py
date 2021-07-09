@@ -36,9 +36,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import struct
 import socket
 import math
-from crc32 import calc_crc32, valid_crc32
+from movo.crc32 import calc_crc32, valid_crc32
 import array
-from system_defines import *
+from movo.system_defines import *
 import timeit
 
 """
@@ -111,8 +111,8 @@ def validate_response(rsp,expected_len):
 def add_bytes(list_to_append,var2,bits):
     if bits % 2:
         return False
-    
-    bytes_to_make = bits/8
+
+    bytes_to_make = bits//8
     tmp_list = []
     for i in range(0,bytes_to_make):
         shift = bits - 8*(i+1)

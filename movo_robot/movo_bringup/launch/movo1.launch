@@ -4,22 +4,22 @@
 
     <!-- ROS Driver, Robot State Publisher, and sensors -->
     <node pkg="si_utils" type="timed_roslaunch"
-        args="5 movo_bringup movo.launch local:=false"
+        args="5 movo_bringup movo.launch local:=true"
         name="platform_bringup" output="screen"/>
 
     <!-- Sensor bringup for platforms that contain sensors-->
     <node pkg="si_utils" type="timed_roslaunch"
-        args="8 movo_bringup movo_sensors.launch local:=false"
+        args="8 movo_bringup movo_sensors.launch local:=true"
         name="sensors_bringup" output="screen"/>
         
      <!-- Platform Manipulation -->
     <node pkg="si_utils" type="timed_roslaunch"
-        args="12 movo_bringup movo_manipulation.launch local:=false"
+        args="12 movo_bringup movo_manipulation.launch local:=true"
         name="manipulation_bringup" output="screen"/> 
 
     <!-- Platform Teleoperation -->
     <node pkg="si_utils" type="timed_roslaunch"
-        args="14 movo_bringup movo_teleop.launch local:=false"
+        args="14 movo_bringup movo_teleop.launch local:=true"
         name="teleop_bringup" output="screen"/>
            
         
